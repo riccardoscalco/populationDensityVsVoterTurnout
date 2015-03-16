@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   version="1.1"
+   width="124.32615"
+   height="64.034233"
+   id="svg4093">
+  <defs
+     id="defs4095" />
+  <metadata
+     id="metadata4098">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     transform="translate(-249.2655,-528.91649)"
+     id="layer1">
+    <text
+       x="-623.46222"
+       y="-198.64218"
+       transform="matrix(-0.09219849,-0.99574065,-0.99574065,0.09219849,0,0)"
+       id="text3236-9-3-35"
+       xml:space="preserve"
+       style="font-size:143.01875305px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#313131;fill-opacity:1;stroke:none;font-family:Lekton;-inkscape-font-specification:Lekton"><tspan
+         x="-623.46222"
+         y="-198.64218"
+         id="tspan3238-9-0-1">B</tspan></text>
+    <path
+       d="M -882,943.86218 A 1.5,1.5 0 1 1 -885,943.86218 1.5,1.5 0 1 1 -882,943.86218 z"
+       transform="matrix(-0.54942137,-5.9337328,-5.9337328,0.54942137,5479.8646,-5182.2993)"
+       id="path3240-7-8-7"
+       style="fill:#313131;fill-opacity:1;stroke:none" />
+  </g>
+</svg>

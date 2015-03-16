@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8">
+    <title></title>
+    <meta name="author" content="Riccardo Scalco">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="keywords" content="Analytic Journalism, Data Driven Journalism,
+    Data Visualization, Data Analysis, Web Spidering, Data scientist, Data
+    artist, interactive things, web design, web developer">
+    <link href='http://fonts.googleapis.com/css?family=Roboto+Slab:400,700' rel='stylesheet' type='text/css'>
+    <!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>-->
+    <script src="./js/jquery.min.js"></script>
+    <!--<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>-->
+    <script src="./js/d3.v3.min.js" charset="utf-8"></script>
+    <link rel="stylesheet" type="text/css" href="css/normalize.css">
+    <link rel="stylesheet" type="text/css" href="css/simplegrid.css">
+    <style type='text/css'>
+      body {
+        background-color: #e1e1e1;
+        font-family: 'Roboto Slab', serif;
+        font-size: 18px;
+        color: #515151;
+      }
+
+      #container {
+        z-index: 0;
+        top: 50px;
+        margin-top: 0px;
+        position: absolute;
+        margin: 0 auto;
+        width: 100%;
+      }
+
+      .box {
+        max-width: 700px;
+        padding-top: 60px;
+        padding-bottom: 100px;
+      }
+
+      #text-container {
+        background: #d1d1d1;
+        margin-top: 100px;
+        margin: auto;
+        /*padding-top:400px;*/
+        color: #131313;
+        opacity: 0;
+        border-top: 2px solid #c1c1c1;
+      }
+
+      #details-container {
+        display: none;
+        background: #d6d6d6;
+        margin-top: 100px;
+        margin: auto;
+        /*padding-top:400px;*/
+        opacity: 1;
+        border-top: 2px solid #c1c1c1;
+        border-bottom: 2px solid #c1c1c1;
+        padding-bottom: 80px;
+        padding-top: 50px;
+      }
+      
+      footer {
+        opacity: 0;
+        height: 150px;
+        padding-top: 35px;
+        background: #d1d1d1;
+      }
+
+      .shadows {
+        fill: #ffffff;
+        opacity: 1;
+      }
+
+      circle {
+        /*stroke-width: .5px;
+        stroke: #fff;*/
+        opacity: 1;
+        fill: #131313;
+      }
+
+      .linreg {
+        stroke-width: 2px;
+        stroke: #00ff7f;
+        /*stroke: #e1e1e1;*/
+      }
+
+      .inter-line {
+        stroke: #00ff7f;
+        opacity: 0.2;
+      }
+
+      .shadow-rect {
+        stroke: #e1e1e1;
+      }
+      
+      .text {
+        font-size: 13px;
+        font-weight: bold;
+        fill: #111;
+      }
+      
+      .item-on {
+        fill: #00ff7f;
+      }
+
+      .item-off {
+        fill: #111;
+      }
+
+      .item {
+        cursor: pointer;
+      }
+
+      .item:hover {
+        fill: #00ff7f;
+      }
+
+      .list-title {
+        font-weight: bold;
+        cursor: text;
+        padding-bottom: 7px;
+      }
+
+      .list-title:hover {
+        opacity: 0.7;
+        color: #131313;
+      }
+
+      ::selection {
+        background: #a1a1a1;
+        color: #111;
+      }
+
+      ::-moz-selection {
+        background: #a1a1a1;
+        color: #111;       
+      }
+
+      ul {
+        list-style: none;
+      }
+
+      li {
+        opacity: 0.7;
+        text-align: right;
+        cursor: pointer;
+        padding-bottom: 2px;
+      }
+
+      li:hover {
+        opacity: 1;
+      }
+
+      .on-year {
+        color: #00ff7f;
+      }
+
+      .on-data {
+        color: #00ff7f;
+      }
+
+      .on-conf {
+        color: #00ff7f;
+      }      
+
+      .arc {
+        fill: #00ff7f;
+        opacity: 0.2;
+      }
+
+      .on {
+        fill: #00ff7f;
+      }
+
+      .details {
+        margin: auto;
+        padding: 0px 10px 0px 10px;
+        font-size: 13px;
+      }
+
+      h2 {
+        margin-top: 20px;
+      }
+
+      h1 {
+        background: #d1d1d1;
+        text-align: center;
+        font-size: 25px;
+        margin-top: 0px;
+        padding-top: 20px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid #c1c1c1;
+        opacity: 0;
+      }
+
+      em {
+        font-style: normal;
+        color: #313131;
+      }
+
+      .high {
+        font-size: 22px;
+      }
+
+      p {
+        color: #515151;
+      }
+      
+      .details p, .details a {
+        color: #515151;
+      }
+
+      #seeDetails, #closeDetails {
+        font-weight: bold;
+        margin-right: 20px;
+        font-size: 12px;
+        background-color: #b1b1b1;
+        opacity: 0.5;
+        color: #131313;
+        padding: 8px 15px 8px 15px;
+        border-radius:25px;
+        float: right;
+      }
+
+      #closeDetails {
+        margin-top: 20px;
+      }
+
+      #seeDetails:hover, #closeDetails:hover {
+        opacity: 0.7;
+      }
+      
+      #credits {
+        background-color: #333;
+        max-width: 400px;
+        margin: auto;
+      }
+
+      
+      #credits a {
+        float: left;
+        margin: 30px 14px 0px 34px;
+        color: #313131;
+        opacity: 0.9;
+      }
+
+      #credits a:hover {
+        opacity: 1;
+      }
+
+      #credits i {
+        margin: 0px;
+        padding: 0px;
+        font-size: 25px;
+      }
+
+      #credits img {
+        display: block;
+        margin-right: 20px;
+        margin-left: 40px;
+      }
+
+      #logotuxtax {
+        margin: 0px;
+        width: 80px;
+        float: left;
+      }
+
+      /*
+      .label {
+        opacity: 1;
+        stroke: #313131;
+        stroke-width: 0px;
+      }
+
+      .label-circle {
+        opacity: 1;
+        stroke: #313131;
+        stroke-width: 0px;
+        z-index: 1;
+      }
+      */
+
+      #license {
+        clear:both;
+        width: 100%;
+        margin: auto;
+        font-size: 10px;
+        font-family: monospace;
+        padding-top: 5px;
+        padding-bottom: 3px;
+        text-align: center;
+        background-color: #333;
+      }
+
+      #license a {
+        color: #e1e1e1;
+        text-decoration: none;
+      }
+
+      @media (max-width: 640px) {
+        h1 {
+          font-size: 20px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        h1 {
+          font-size: 14px;
+        }
+      }
+
+
+    </style>
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+    <!--<link rel="stylesheet" href="js/fontawesome/css/font-awesome.min.css">-->
+    <script type="text/javascript"
+      src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    </script>
+    <!--
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      ga('create', 'UA-28849332-2', 'eidogram.com');
+      ga('send', 'pageview');
+    </script>
+    -->
+  </head>
+  <body>
+    <h1>Piedmont municipalities: population density <em>vs</em> voter turnout</h1>
+    <div id="container"></div>
+    <div id="text-container">
+      <div class="box grid grid-pad">
+        <div class="col-6-12">
+          <p>
+            <em class="high">
+              The voter turnout, i.e. the percentage of eligible voters who cast a ballot in an election, has been related with the population density of the 1206 municipalities of the italian region Piedmont.
+            </em>
+          </p>
+          <p>
+            The spots on the scatter plot above represent the 1206 municipalities, the x and y coordinates refer respectively to the logarithm of the population density (people/km^2) and to the voter turnout during the italian 2013 general election of the Chamber of Deputies. The area of the spots refers instead to the population size of the corresponding municipality.
+          </p>
+        </div>
+        <div class="col-6-12">
+          <p>
+            The analysis is extended by the opportunity to shift, on the x-axis, between the logarithm of the population density to the logarithm of the population size and, on the y-axis, to the 2008 and 2006 general elections.
+          </p>
+          <p>
+            The green straight line shows a linear regression analysis on the set of points, the 95% confidence intervals on the y-intercept and slope are drawn on demand.
+          </p>
+          <p>
+            <em class="high">
+              A slope greater than zero suggests a direct relationship between the logarithm of the population density and the voter turnout.
+            </em>
+          </p>
+          <span id="seeDetails">further details</span>
+        </div>
+      </div>
+    </div>
+    <div id="details-container">
+      <div class="box details">
+        <h2>Data Source</h2>
+        <p>
+          Data on general elections: <a href="http://elezionistorico.interno.it">elezionistorico.interno.it</a>, © Ministero dell'Interno. Tutti i diritti riservati.</br>
+          Population density and size of Piedmont municipalities: <a href="http://istat.it">istat.it</a>, Creative Commons - Attribuzione - versione 3.0 (CC BY 3.0 IT)
+        </p>
+        <h2>Mathematical Methods</h2>
+        <p>
+          The following text is a brief summary of lectures 29,30 and 31 given by 
+          <a href="http://ocw.mit.edu/courses/mathematics/18-443-statistics-for-applications-fall-2003/index.htm">Dmitry Panchenko</a> at MIT.
+
+          Suppose we are given a set of observations \(\{(X_1,Y_1),\dots,(X_n,Y_n)\}\), where \(X_i,Y_i \in \mathbb{R}\).
+          We assume to model the random variable \(Y\) as a linear function of the random variable \(X\) with the presence of a random noise,
+          i.e. we are assuming
+
+          $$
+          Y_i = b_0 + b_1 X_i + \epsilon_i
+          $$
+
+          where \(b_0,b_1\in\mathbb{R}\) and \(\epsilon_i\sim N(0,\sigma^2)\) (that is \(\epsilon_i\) is assumed to have normal distribution) are unknown parameters.
+          On the following we will estimate the unknown parameters and their confidence intervals, given the observations.
+
+          Let us think of the points \(X_i\) as fixed and non random and deal only with the randomness that comes from the noise variables \(\epsilon_i\).
+          In other words we deal only with the distribution \(P(Y_i)=f(X_i,b_0,b_1,\epsilon_i)\), which is normal because the randomness comes from the normal variables \(\epsilon_i\).
+
+          We want to find the estimates \(\hat{b_0}, \hat{b_1}\) and \(\hat{\sigma}^2\) that fits the observations best and one can define the measure of the quality of fit in different ways. Here we use the maximum likelihood estimates, which maximize the probability \(P(Y_1Y_2\dots Y_n)=P(Y_1)P(Y_2)\dots P(Y_n)\)
+          of the event \(Y_1 \text{ AND } Y_2 \text{ AND } \dots \text{ AND } Y_n\).
+          The maximum likelihood estimates are
+
+          $$
+          \hat{b_1} = \frac{\bar{XY}-\bar{X}\bar{Y}}{\bar{X^2}-\bar{X}^2},\qquad
+
+          \hat{b_0} = \bar{Y} - \hat{b_1}\bar{X},\qquad
+
+          \hat{\sigma}^2 = \frac{1}{n}\sum^n_{i=1}(Y_i - \hat{b_0} - \hat{b_1}X_i)^2
+          $$
+
+          where \(\bar{X}\) is the mean of \(X\)
+          (note that \(b_0\) and \(b_1\) are the same as found with the least-squares method).
+
+          The knowledge of the estimates is enough to draw the line that fits the observations,
+          but an important further information (the confidence) comes from the distribution of the estimates.
+          The estimates have a probability distribution because they are functions of \(Y_i\), which have distributions \(P(Y_i)\).
+
+          What are the confidence intervals? It will become apparent with an example. It can be proved that the random variable \(\hat{\sigma}^2\) is independent of \(\hat{b_0}\) and \(\hat{b_1}\)
+          and that it has a chi squared distribution with \(n-2\) degrees of freedom. In formulas
+
+          $$
+          \frac{n\hat{\sigma}^2}{\sigma^2}\sim\chi^2_{n-2}.
+          $$
+
+          Note that \(\chi^2_{n-2}\) is a well known distribution, i.e. we can calculate probabilities with it. For example, let be \(\alpha=0.025\), if we find the values \(c_1\) and \(c_2\) such that
+          \(\int_0^{c_1}\chi^2_{n-2}dx=\alpha/2\) and \(\int_{c_2}^{\infty}\chi^2_{n-2}dx=\alpha/2\), then the probability of the remaining interval is \(\int_{c_1}^{c_2}\chi^2_{n-2}dx=1-\alpha = 0.95\),
+          which means that
+
+          $$
+          P(c_1\leq\frac{n\hat{\sigma}^2}{\sigma^2}\leq c_2) = 0.95.
+          $$
+
+          Solving for \(\sigma^2\) we find the \(1-\alpha\) confidence interval
+
+          $$
+          \frac{n\hat{\sigma}^2}{c_2}\leq\sigma^2\leq\frac{n\hat{\sigma}^2}{c_1}.
+          $$
+
+          Note that the confidence interval is calculable.
+
+          With the same meaning, the \(1-\alpha\) confidence intervals of \(b_1\) and \(b_0\) are
+
+          $$
+          \hat{b_1} - c \sqrt{\frac{\hat{\sigma}^2}{(n-2)(\bar{X^2}-\bar{X}^2)}} \leq b_1 \leq \hat{b_1} + c \sqrt{\frac{\hat{\sigma}^2}{(n-2)(\bar{X^2}-\bar{X}^2)}}
+          $$
+
+          $$
+          \hat{b_0} - c \sqrt{\frac{\hat{\sigma}^2}{n-2}\left(1+\frac{\bar{X}^2}{\bar{X^2}-\bar{X}^2}\right)} \leq b_0 \leq \hat{b_0} + c \sqrt{\frac{\hat{\sigma}^2}{n-2}\left(1+\frac{\bar{X}^2}{\bar{X^2}-\bar{X}^2}\right)}
+          $$
+
+          where the value \(c\) originates from the Student distribution with \(n-2\) degrees of freedom: \(t_{n-2}(-c,c)=1-\alpha\).
+        </p>
+        <span id="closeDetails">close</span>
+      </div>
+    </div>
+    <footer>
+      <div id="credits">
+        <img id="logotuxtax" src="tuxtax.svg" alt="Tuxtax">
+        <a href="https://twitter.com/intent/tweet?url=http://www.tuxtax.ch/people-displaced-by-disasters/&text=People%20displaced%20by%20natural%20disasters%20%23Dataviz">
+          <i class="fa fa-twitter"></i>
+        </a>
+        <a href="https://www.facebook.com/sharer/sharer.php?u=http://www.tuxtax.ch/people-displaced-by-disasters/">
+          <i class="fa fa-facebook"></i>
+        </a>
+        <a href="https://plus.google.com/share?url=http://www.tuxtax.ch/people-displaced-by-disasters">
+          <i class="fa fa-google-plus"></i>
+        </a>
+      </div>
+    </footer>
+    <div id="license">
+      <a href="http://creativecommons.org/licenses/by/3.0/">LICENSE CC BY 3.0</a>
+    </div>
+  </body>
+
+  <script>
+  
+  /*
+  var margin = {top: 20, right: 50, bottom: 30, left: 50};
+  var width = 960 - margin.left - margin.right,
+      height = 500 - margin.top - margin.bottom;
+  */
+  var width = 960;
+  var height = 500;
+
+  var svg = d3.select("#container").append("svg")
+      .attr("id", "chart")
+      .attr("viewBox", "0 0 960 500")          // make it
+      .attr("preserveAspectRatio", "xMidYMid") // responsive
+      //.attr("width", width + margin.right + margin.left)
+      //.attr("height", height + margin.top + margin.bottom);
+      .attr("width", width)
+      .attr("height", height);
+
+  var defs = svg.append("defs");
+  defs
+    .append('pattern')
+      .attr('id', 'diagonalHatch')
+      .attr('patternUnits', 'userSpaceOnUse')
+      .attr('width', 4)
+      .attr('height', 4)
+    .append('path')
+      .attr('d', 'M-1,1 l2,-2 M0,4 l4,-4 M3,5 l2,-2')
+      .attr('stroke', '#616161')
+      .attr('stroke-width', 1);
+
+  var img = svg.append("g")
+      .attr("transform","translate(" + 0 + "," + 0.03 * height + ")");
+
+  var text = svg.append("g")
+    .attr("class","text")
+    .attr("transform","translate(" + 0 + "," + 0.9 * height + ")");
+
+  //var colors = ["#222222", "#222222", "#232323", "#242424", "#252525", "#262626"];
+  var colors = ["#313131", "#323232", "#333333", "#343434", "#353535", "#363636"];
+  var electionsDates = {"y13":"24th February 13", "y08":"April 13th 08", "y06":"April 9th 06"};
+
+
+  d3.json("data.json", function(error, data) {
+    
+    data.sort(function (a, b) { return b.pop - a.pop; }); // higher evacuations are on the bottom
+    
+    // linear regression parameters (see ./script.py)
+    lr_log = {
+      "dens":{
+        'y13': {
+          's2': 0.0027017114910056154, 
+          'ds2a': 0.0024962384773704271,
+          'ds2b': 0.0029446469805571914, 
+          'b0': 0.65831086653909066, 
+          'b1': 0.022717575212475884, 
+          'db1a': 0.020320105514684297,
+          'db1b': 0.025115044910267472,
+          'db0a': 0.64744866413604207,
+          'db0b': 0.66917306894213924
+        },
+        'y08': {
+          's2': 0.001786039194332607,
+          'ds2a': 0.0016502057210132598,
+          'ds2b': 0.0019466382469990311,
+          'b0': 0.77294411555819065,
+          'b1': 0.0090229863083594909,
+          'db1a': 0.0070736842816121045,
+          'db1b': 0.010972288335106876,
+          'db0a': 0.7641124238881325,
+          'db0b': 0.7817758072282488
+        },
+        'y06': {
+          's2': 0.0011516638028308982,
+          'ds2a': 0.0010640764223685429,
+          'ds2b': 0.001255220385638123,
+          'b0': 0.79110304409444676,
+          'b1': 0.012696974441421397,
+          'db1a': 0.011131678351920712,
+          'db1b': 0.014262270530922083,
+          'db0a': 0.78401116595287168,
+          'db0b': 0.79819492223602184
+        }
+      },
+      "pop":{
+        'y13': {
+          's2': 0.0030583815060594016,
+          'ds2a': 0.0028257827008249291,
+          'ds2b': 0.0033333884455063211,
+          'b0': 0.64255158164973591,
+          'b1': 0.016390834623551127,
+          'db1a': 0.013952205833142512,
+          'db1b': 0.018829463413959743,
+          'db0a': 0.62520089460171535,
+          'db0b': 0.65990226869775648
+        },
+        'y08': {
+          's2': 0.0018903631358530948,
+          'ds2a': 0.0017465955234778644,
+          'ds2b': 0.0020603429043693066,
+          'b0': 0.78509683691262211,
+          'b1': 0.0038762238184332312,
+          'db1a': 0.0019590014509774482,
+          'db1b': 0.0057934461858890141,
+          'db0a': 0.77145592303920862,
+          'db0b': 0.79873775078603559
+        },
+        'y06': {
+          's2': 0.0013252973669047403,
+          'ds2a': 0.0012245046490859557,
+          'ds2b': 0.0014444669250541853,
+          'b0': 0.79764845516190974,
+          'b1': 0.0069645734023945334,
+          'db1a': 0.0053592721855382185,
+          'db1b': 0.0085698746192508484,
+          'db0a': 0.78622684021951683,
+          'db0b': 0.80907007010430265
+        }
+      }
+    };
+
+    var densScale = d3.scale.log()
+      .domain([d3.min(data, function(d) { return d.dens; }), 10 * d3.max(data, function(d) { return d.dens; })])
+      .range([0, width]); 
+
+    var percScale = d3.scale.linear()
+      .domain([d3.min(data, function(d) { return d["y13"]["perc"]; }), d3.max(data, function(d) { return d["y13"]["perc"]; })])
+      .range([0, height]);
+    var popScale = d3.scale.log()
+      .domain([d3.min(data, function(d) { return d.pop; }), 10 * d3.max(data, function(d) { return d.pop; })])
+      //.domain([d3.min(data, function(d) { return d.pop; }), 2300000])
+      .range([0, width]);
+
+    var rDensScale = d3.scale.sqrt()
+      .domain([d3.min(data, function(d) { return d.pop; }), d3.max(data, function(d) { return d.pop; })])
+      .range([0,70]);
+
+    var rPopScale = d3.scale.sqrt()
+      .domain([d3.min(data, function(d) { return d.dens; }), d3.max(data, function(d) { return d.dens; })])
+      .range([0,40]);
+
+    
+    ///////////////////////////////
+
+    var rect= function(b0, b1, x) {
+      return b0 + b1 * x;
+    };
+
+    var state = {"year":"y13", "xdata":"dens", "arc":"closed"};
+
+    var coords = function(b0,b1) {
+      var xdataScale = state.xdata == "pop" ? popScale : densScale;
+      var x1 = d3.min(data, function(d) { return state.xdata == "pop" ? d.pop : d.dens; }),
+          x2 = 11 * d3.max(data, function(d) { return state.xdata == "pop" ? d.pop : d.dens; }),
+          y1 = rect(lr_log[state.xdata][state.year][b0],lr_log[state.xdata][state.year][b1],Math.log(x1)),
+          y2 = rect(lr_log[state.xdata][state.year][b0],lr_log[state.xdata][state.year][b1],Math.log(x2));
+      return {
+        "x1":xdataScale(x1),
+        "x2":xdataScale(x2),
+        "y1":height - percScale(y1),
+        "y2":height - percScale(y2)
+      };
+    };
+
+    var arcObj = function() {
+      var EndLine = coords("b0","db1a"),
+          StartLine = coords("b0","db1b");
+      var innerR = Math.sqrt(Math.pow(0,2) + Math.pow(0,2)),
+          outerR = Math.sqrt(Math.pow(coordsLrLine.x2-coordsLrLine.x1,2) + Math.pow(coordsLrLine.y2-coordsLrLine.y1,2)),
+          startA = Math.atan(Math.abs(StartLine.x2 - StartLine.x1)/Math.abs(StartLine.y2 - StartLine.y1)),
+          endA = Math.atan(Math.abs(EndLine.x2 - EndLine.x1)/Math.abs(EndLine.y2 - EndLine.y1));
+      return {"innerRadius":innerR, "outerRadius":outerR, "startAngle":startA, "endAngle":endA};
+    };
+
+    var tooltips = img.append("g");
+
+    var circles = img.append("g")
+        .attr("id","circles")
+      .selectAll("circles")
+        .data(data)
+        .enter()
+        .append("circle")
+          .style("opacity","0")
+          .style("fill", function() { return colors[Math.floor(Math.random() * colors.length)]; })
+          .attr("cx", function(d) { return densScale(d.dens); }) // start with dens
+          .attr("cy", function(d) { return height - percScale(d[state.year]["perc"]); })
+          .attr("r", function(d) { return rDensScale(d.pop); })
+          .on("click",function(d,i) {
+            var xdataScale = state.xdata == "pop" ? popScale : densScale;
+            var xtip = xdataScale(state.xdata == "pop" ? d.pop : d.dens),
+                ytip = height - percScale(d[state.year]["perc"]),
+                pperc = Math.round(d[state.year]["perc"] * 1000) / 10,
+                xxdatatxt = state.xdata == "pop" ? "size: " : "density: ",
+                xxdata = state.xdata == "pop" ? Math.round(d.pop) : Math.round(d.dens * 1000)/1000;
+            var tip = tooltips.append("g")
+              .attr("id","tip" + i)
+              .datum(d)
+              .attr("transform","translate(" + xtip + "," + ytip + ")")
+              .on("click",function() {
+                d3.select("#tip" + i).remove()
+              });
+            tip.append("circle")
+              //.attr("d","M 0 0 L 20 0 L 20 10 L 12 10 L 10 16.93 L 8 10 L 0 10 Z")
+              //.attr("transform","translate(" + xtip + "," + ytip + ")")
+              .attr({"cx":0, "cy":0, "r":40})
+              .style({"fill-opacity":"0.7", "stroke-opacity":"1", "stroke-width":"2px", "fill":"#f1f1f1"});
+            tip.append("text")
+              .text(d.comune)
+              .attr({"x":0, "y":0, "dy":"-10"})
+              .style({"font-size":"8px","text-anchor":"middle", "font-weight":"bold"});
+            tip.append("text")
+              .attr("class","tipxData")
+              .text(xxdatatxt +  xxdata)
+              .attr({"x":0, "y":0, "dy":"0"})
+              .style({"font-size":"8px","text-anchor":"middle"});
+            tip.append("text")
+              .attr("class","tipPerc")
+              .text("turnout: " + pperc + "%")
+              .attr({"x":0, "y":0, "dy":"10"})
+              .style({"font-size":"8px","text-anchor":"middle"});
+          });
+
+    var maxpop = d3.max(data, function(d) { return Math.log(d.pop);}),
+        minpop = d3.min(data, function(d) { return Math.log(d.pop);});
+    circles.transition().duration(1500)
+      .delay(function(d) { return 2000 * (maxpop/Math.log(d.pop) - 1); })
+      //.delay(function(d,i) { return i * 7000/1206; })
+      .style("opacity","1");
+
+    var coordsLrLine = coords("b0","b1");
+
+    var lrLine = img.append("line")
+        .attr("x1",coordsLrLine.x1)
+        .attr("y1",coordsLrLine.y1)
+        .attr("x2",coordsLrLine.x2)
+        .attr("y2",coordsLrLine.y2)
+        .style("stroke-dasharray","3,3")
+        .style("opacity","0")
+        .attr("class","linreg");
+
+    lrLine.transition().duration(500)
+      .delay(function(d) { return 2000 * (maxpop/minpop - 2); })
+      .style("opacity","1");
+
+    d3.select("#text-container").transition().duration(500)
+      .delay(function(d) { return 2000 * (maxpop/minpop - 1.5); })
+      .style("opacity","1");
+
+    d3.select("footer").transition().duration(500)
+      .delay(function() { return 2000 * (maxpop/minpop - 1.5); })
+      .style("opacity","1");
+
+    var db0Line = img.append("line")
+        .attr("x1",coordsLrLine.x1)
+        .attr("y1",coordsLrLine.y1)
+        .attr("x2",coordsLrLine.x2)
+        .attr("y2",coordsLrLine.y2)
+        .style("stroke-width","0")
+        .attr("class","inter-line");
+
+    var arcPath = function() {
+        var ao = arcObj();
+        var arc = d3.svg.arc()
+          .innerRadius(ao.innerRadius)
+          .outerRadius(ao.outerRadius * 1.1)
+          .startAngle(function() { return state.arc == "closed" ? ao.startAngle + (ao.endAngle - ao.startAngle)/2 : ao.startAngle; })
+          .endAngle(function() { return state.arc == "closed" ? ao.startAngle + (ao.endAngle - ao.startAngle)/2 : ao.endAngle; }); 
+          //.startAngle(ao.startAngle)
+          //.endAngle(ao.endAngle);
+        return arc;
+    };
+
+    var inclArc = img.append("path")
+        .attr("d", arcPath(state.arc))
+        .attr("class","arc")
+        .attr("transform","translate(0," + coordsLrLine.y1 + ")");
+
+    var tooltips = img.append("g");
+
+    var change = function(xdata, newYear) {
+
+      state.xdata = xdata;
+      state.year = newYear;
+      coordsLrLine = coords("b0","b1");
+
+      d3.select("#txtData")
+        .text(function() { return xdata == "pop" ? "size (log)" : "density (log)"; });
+      d3.select("#txtElect")
+        .text(function() { return electionsDates[state.year]; });
+
+      circles.transition().duration(2000)
+        .attr("cx", function(d) {
+          var xdataScale = xdata == "pop" ? popScale : densScale;
+          var value = xdata == "pop" ? d.pop : d.dens;
+          return xdataScale(value); 
+        })
+        .attr("cy", function(d) { return height - percScale(d[state.year]["perc"]); })
+        .attr("r", function(d) {
+          var value = xdata == "pop" ? d.dens : d.pop;
+          var rdataScale = xdata == "pop" ? rPopScale : rDensScale;
+          //return rdataScale(value);
+          return rDensScale(d.pop);
+        });
+
+      tooltips.selectAll("g").transition().duration(2000)
+        .attr("transform", function(d) {
+          var xdataScale = state.xdata == "pop" ? popScale : densScale;
+          var xtip = xdataScale(state.xdata == "pop" ? d.pop : d.dens),
+              ytip = height - percScale(d[state.year]["perc"]);
+          return  "translate(" + xtip + "," + ytip + ")";
+        });
+
+      tooltips.selectAll(".tipPerc")
+        .text(function(d) {
+          var pperc = Math.round(d[state.year]["perc"] * 1000) / 10;
+          return "turnout: " + pperc + "%"
+        });
+
+      tooltips.selectAll(".tipxData")
+        .text(function(d) {
+          var xxdatatxt = state.xdata == "pop" ? "size: " : "density: ",
+              xxdata = state.xdata == "pop" ? Math.round(d.pop) : Math.round(d.dens * 1000)/1000;
+          return xxdatatxt +  xxdata;
+        });
+
+
+
+      lrLine.transition().duration(2000)
+        .attr("x1",coordsLrLine.x1)
+        .attr("y1",coordsLrLine.y1)
+        .attr("x2",coordsLrLine.x2)
+        .attr("y2",coordsLrLine.y2);
+
+      var db0s = db0Line.style("stroke-width");
+      var db0a = lr_log[state.xdata][state.year]['db0a'],
+          db0b = lr_log[state.xdata][state.year]['db0b'];
+      db0Line.transition().duration(2000)
+        .attr("x1",coordsLrLine.x1)
+        .attr("y1",coordsLrLine.y1)
+        .attr("x2",coordsLrLine.x2)
+        .attr("y2",coordsLrLine.y2)
+        .style("stroke-width",function() {
+          return db0s == "0px" || db0s == "0" ? 0 : percScale(db0b)-percScale(db0a);
+        });
+
+      inclArc.transition().duration(2000)
+        .attr("d", arcPath())
+        .attr("transform","translate(0," + coordsLrLine.y1 + ")");
+
+    };
+
+    /*
+    var changeYear = function(newYear) {
+
+      state.year = newYear;
+      coordsLrLine = coords("b0","b1");
+
+      d3.select("#txtElect")
+        .text(function() { return electionsDates[state.year]; });
+
+      circles.transition().duration(2000)
+        .attr("cy", function(d) { return height - percScale(d[state.year]["perc"]); });
+      
+      lrLine.transition().duration(2000)
+        .attr("y1",coordsLrLine.y1)
+        .attr("y2",coordsLrLine.y2);
+
+      var db0s = db0Line.style("stroke-width");
+      var db0a = lr_log[state.xdata][state.year]['db0a'],
+          db0b = lr_log[state.xdata][state.year]['db0b'];
+      db0Line.transition().duration(2000)
+        .attr("y1",coordsLrLine.y1)
+        .attr("y2",coordsLrLine.y2)
+        .style("stroke-width",function() {
+          return db0s == "0px" || db0s == "0" ? 0 : percScale(db0b)-percScale(db0a);
+        });
+
+      inclArc.transition().duration(2000)
+        .attr("d", arcPath())
+        .attr("transform","translate(0," + coordsLrLine.y1 + ")");
+    };
+
+    var changeData = function(xdata) {
+
+      state.xdata = xdata;
+      coordsLrLine = coords("b0","b1");
+
+      d3.select("#txtData")
+        .text(function() { return xdata == "pop" ? "size (log)" : "density (log)"; });
+
+      circles.transition().duration(2000)
+        .attr("cx", function(d) {
+          var xdataScale = xdata == "pop" ? popScale : densScale;
+          var value = xdata == "pop" ? d.pop : d.dens;
+          return xdataScale(value); 
+        })
+        .attr("r", function(d) {
+          var value = xdata == "pop" ? d.dens : d.pop;
+          var rdataScale = xdata == "pop" ? rPopScale : rDensScale;
+          //return rdataScale(value);
+          return rDensScale(d.pop);
+        });
+
+      lrLine.transition().duration(2000)
+        .attr("x1",coordsLrLine.x1)
+        .attr("y1",coordsLrLine.y1)
+        .attr("x2",coordsLrLine.x2)
+        .attr("y2",coordsLrLine.y2);
+
+      var db0s = db0Line.style("stroke-width");
+      var db0a = lr_log[state.xdata][state.year]['db0a'],
+          db0b = lr_log[state.xdata][state.year]['db0b'];
+      db0Line.transition().duration(2000)
+        .attr("x1",coordsLrLine.x1)
+        .attr("y1",coordsLrLine.y1)
+        .attr("x2",coordsLrLine.x2)
+        .attr("y2",coordsLrLine.y2)
+        .style("stroke-width",function() {
+          return db0s == "0px" || db0s == "0" ? 0 : percScale(db0b)-percScale(db0a);
+        });
+
+      inclArc.transition().duration(2000)
+        .attr("d", arcPath())
+        .attr("transform","translate(0," + coordsLrLine.y1 + ")");
+
+    };
+    */
+
+
+    var clickShowdb0 = function(){
+      console.log(db0Line.style("stroke-width"));
+      if (db0Line.style("stroke-width") == "0px" || db0Line.style("stroke-width") == "0") {
+        var db0a = lr_log[state.xdata][state.year]['db0a'],
+            db0b = lr_log[state.xdata][state.year]['db0b'];
+
+        db0Line.transition().duration(1200).style("stroke-width",function() { return percScale(db0b)-percScale(db0a); });
+      } else {
+        db0Line.transition().duration(1200).style("stroke-width",0);
+      };
+    };
+
+    var clickShowArc = function() {
+      if (state.arc == "closed") {
+        state.arc = "open";
+      } else {
+        state.arc = "closed";
+      };
+      inclArc.transition().duration(1200)
+        .attr("d", arcPath())
+        .attr("transform","translate(0," + coordsLrLine.y1 + ")");      
+    };
+
+
+    // texts    
+
+    d3.select("#y13").on("click",function() {
+      d3.select(".on-year").classed("on-year",0);
+      d3.select(this).classed("on-year",1);
+      changeYear("y13");
+    });
+    d3.select("#y08").on("click",function() {
+      d3.select(".on-year").classed("on-year",0);
+      d3.select(this).classed("on-year",1);
+      changeYear("y08");
+    });
+    d3.select("#y06").on("click",function() {
+      d3.select(".on-year").classed("on-year",0);
+      d3.select(this).classed("on-year",1);
+      changeYear("y06");
+    });
+
+    d3.select("#dens").on("click",function() {
+      d3.select(".on-data").classed("on-data",0);
+      d3.select(this).classed("on-data",1);
+      changeData("dens");
+    });
+    
+    d3.select("#pop").on("click",function() {
+      d3.select(".on-data").classed("on-data",0);
+      d3.select(this).classed("on-data",1);
+      changeData("pop");
+    });
+
+    d3.select("#inter").on("click", function() {
+      var item = d3.select(this);
+      item.classed("on-conf") == 1 ? item.classed("on-conf",0) : item.classed("on-conf",1);
+      clickShowdb0();
+    });
+
+    d3.select("#incl").on("click", function() {
+      var item = d3.select(this);
+      item.classed("on-conf") == 1 ? item.classed("on-conf",0) : item.classed("on-conf",1);
+      clickShowArc();
+    });
+
+
+    // Legend
+    
+
+    var legend = img.append("g")
+      .style({"fill":"#616161", "opacity":"0"})
+      //.attr("transform","translate(70,90)");
+      .attr("transform","translate(210,350)");
+
+    var buttons = legend.append("g")
+      .attr("transform","translate(510,30) rotate(-45)");
+    buttons.append("path")
+      .attr("transform","translate(0,0)")
+      .attr("d","M 7 10 L 13 10 M 10 7 L 10 13")
+      .style({"stroke-width":"1px", "stroke":"#626262"});
+    buttons.append("path")
+      .attr("transform","translate(20,0)")
+      .attr("d","M 7 10 L 13 10 M 10 7 L 10 13")
+      .style({"stroke-width":"1px", "stroke":"#626262"});
+    buttons.append("path")
+      .attr("transform","translate(40,0)")
+      .attr("d","M 7 10 L 13 10 M 10 7 L 10 13")
+      .style({"stroke-width":"1px", "stroke":"#626262"});
+    buttons.append("path")
+      .attr("transform","translate(0,20)")
+      .attr("d","M 7 10 L 13 10 M 10 7 L 10 13")
+      .style({"stroke-width":"1px", "stroke":"#626262"});
+    buttons.append("path")
+      .attr("transform","translate(20,20)")
+      .attr("d","M 7 10 L 13 10 M 10 7 L 10 13")
+      .style({"stroke-width":"1px", "stroke":"#626262"});
+    buttons.append("path")
+      .attr("transform","translate(40,20)")
+      .attr("d","M 7 10 L 13 10 M 10 7 L 10 13")
+      .style({"stroke-width":"1px", "stroke":"#626262"});
+    buttons.append("text")
+      .text(electionsDates["y06"])
+      .attr("transform","rotate(90) translate(0,0)")
+      .style({"font-size":"8px", "text-anchor":"end"})
+      .attr({"x":"0", "y":"-7"});
+    buttons.append("text")
+      .text(electionsDates["y08"])
+      .attr("transform","rotate(90) translate(0,-20)")
+      .style({"font-size":"8px", "text-anchor":"end"})
+      .attr({"x":"0", "y":"-7"});
+    buttons.append("text")
+      .text(electionsDates["y13"])
+      .attr("transform","rotate(90) translate(0,-40)")
+      .style({"font-size":"8px", "text-anchor":"end"})
+      .attr({"x":"0", "y":"-7"});
+    buttons.append("text")
+      .text("population density")
+      .attr("transform","rotate(0) translate(0,0)")
+      .style({"font-size":"8px", "text-anchor":"end"})
+      .attr({"x":"0", "y":"12"});
+    buttons.append("text")
+      .text("population size")
+      .attr("transform","rotate(0) translate(0,20)")
+      .style({"font-size":"8px", "text-anchor":"end"})
+      .attr({"x":"0", "y":"12"});
+    buttons.append("circle")
+      .attr("id","mark")
+      .attr("transform","translate(0,0)")
+      .attr({"cx":"10", "cy":"10", "r":"7"})
+      .style({"fill":"#626262", "opacity":"0.1"})
+      .on("click",function() {
+        var itemOn = d3.select(".on");
+        var item = d3.select(this);
+        itemOn.transition().style({"fill":"#626262", "opacity":"0.1"});
+        itemOn.classed("on",0);
+        item.transition().style({"fill":"#00ff7f", "opacity":"0.4"});
+        item.classed("on",1);
+        change("dens","y06");
+      });
+    buttons.append("circle")
+      .attr("id","mark")
+      .attr("transform","translate(20,0)")
+      .attr({"cx":"10", "cy":"10", "r":"7"})
+      .style({"fill":"#626262", "opacity":"0.1"})
+      .on("click",function() {
+        var itemOn = d3.select(".on");
+        var item = d3.select(this);
+        itemOn.transition().style({"fill":"#626262", "opacity":"0.1"});
+        itemOn.classed("on",0);
+        item.transition().style({"fill":"#00ff7f", "opacity":"0.4"});
+        item.classed("on",1);
+        change("dens","y08");
+      });
+    buttons.append("circle")
+      .attr("id","mark")
+      .attr("class","on")
+      .attr("transform","translate(40,0)")
+      .attr({"cx":"10", "cy":"10", "r":"7"})
+      .style({"fill":"#00ff7f", "opacity":"0.4"})
+      .on("click",function() {
+        var itemOn = d3.select(".on");
+        var item = d3.select(this);
+        itemOn.transition().style({"fill":"#626262", "opacity":"0.1"});
+        itemOn.classed("on",0);
+        item.transition().style({"fill":"#00ff7f", "opacity":"0.4"});
+        item.classed("on",1);
+        change("dens","y13");
+      });
+    buttons.append("circle")
+      .attr("id","mark")
+      .attr("transform","translate(0,20)")
+      .attr({"cx":"10", "cy":"10", "r":"7"})
+      .style({"fill":"#626262", "opacity":"0.1"})
+      .on("click",function() {
+        var itemOn = d3.select(".on");
+        var item = d3.select(this);
+        itemOn.transition().style({"fill":"#626262", "opacity":"0.1"});
+        itemOn.classed("on",0);
+        item.transition().style({"fill":"#00ff7f", "opacity":"0.4"});
+        item.classed("on",1);
+        change("pop","y06");
+      });
+    buttons.append("circle")
+      .attr("id","mark")
+      .attr("transform","translate(20,20)")
+      .attr({"cx":"10", "cy":"10", "r":"7"})
+      .style({"fill":"#626262", "opacity":"0.1"})
+      .on("click",function() {
+        var itemOn = d3.select(".on");
+        var item = d3.select(this);
+        itemOn.transition().style({"fill":"#626262", "opacity":"0.1"});
+        itemOn.classed("on",0);
+        item.transition().style({"fill":"#00ff7f", "opacity":"0.4"});
+        item.classed("on",1);
+        change("pop","y08");
+      });
+    buttons.append("circle")
+      .attr("id","mark")
+      .attr("transform","translate(40,20)")
+      .attr({"cx":"10", "cy":"10", "r":"7"})
+      .style({"fill":"#626262", "opacity":"0.1"})
+      .on("click",function() {
+        var itemOn = d3.select(".on");
+        var item = d3.select(this);
+        itemOn.transition().style({"fill":"#626262", "opacity":"0.1"});
+        itemOn.classed("on",0);
+        item.transition().style({"fill":"#00ff7f", "opacity":"0.4"});
+        item.classed("on",1);
+        change("pop","y13");
+      });
+
+
+
+
+
+    var bubble = legend.append("g")
+      .attr("transform","translate(145,-75)");
+    bubble.append("circle")
+      .style({"fill-opacity":"1", "stroke-opacity":"1", "stroke-width":"1px", "fill":"#e1e1e1"})
+      .attr({"cx":"20", "cy":"100", "r":"20"});
+    bubble.append("circle")
+      .style({"fill-opacity":"1", "stroke-opacity":"1", "stroke-width":"1px", "fill":"url(#diagonalHatch)"})
+      .attr({"cx":"20", "cy":"100", "r":"20"});
+    bubble.append("text")
+      .text("population")
+      .style({"font-size":"8px"})
+      .attr({"x":"45", "y":"100", "dy":"0"});
+    bubble.append("text")
+      .text("size (log)")
+      .style({"font-size":"8px"})
+      .attr({"x":"45", "y":"100", "dy":"10"});
+
+    var axes = legend.append("g");
+    axes.append("circle")
+      .style("fill","#626262")
+      .attr({"cx":"0", "cy":"50", "r":"2"});
+    axes.append("line")
+      .style({"stroke-width":"1px", "stroke":"#626262"})
+      .attr({"x1":"0", "x2":"0", "y1":"50", "y2":"0"});
+    axes.append("line")
+      .style({"stroke-width":"1px", "stroke":"#626262"})
+      .attr({"x1":"0", "x2":"50", "y1":"50", "y2":"50"});
+    axes.append("path")
+      .attr("d","M -3 0 L 3 0 L 0 -5.2 Z");
+    axes.append("path")
+      .attr("d","M 50 47 L 50 53 L 55.2 50 Z");
+    axes.append("circle")
+      .attr({"cx":"15", "cy":"30", "r":"4"})
+      .style("fill","#626262");
+    axes.append("circle")
+      .attr({"cx":"35", "cy":"20", "r":"7"})
+      .style({"fill":"#626262",});
+    axes.append("line")
+      .style({"stroke-width":"1px", "stroke":"#626262", "stroke-dasharray":"2,2"})
+      .attr({"x1":"15", "x2":"15", "y1":"30", "y2":"50"});
+    axes.append("line")
+      .style({"stroke-width":"1px", "stroke":"#626262", "stroke-dasharray":"2,2"})
+      .attr({"x1":"15", "x2":"0", "y1":"30", "y2":"30"});
+    axes.append("line")
+      .style({"stroke-width":"1px", "stroke":"#626262", "stroke-dasharray":"2,2"})
+      .attr({"x1":"35", "x2":"35", "y1":"20", "y2":"50"});
+    axes.append("line")
+      .style({"stroke-width":"1px", "stroke":"#626262", "stroke-dasharray":"2,2"})
+      .attr({"x1":"35", "x2":"0", "y1":"20", "y2":"20"});
+    axes.append("text")
+      .text("population")
+      .style({"font-size":"8px"})
+      .attr({"x":"60", "y":"50"});
+    axes.append("text")
+      .attr("id","txtData")
+      .text("density (log)")
+      .style({"font-size":"8px"})
+      .attr({"x":"60", "y":"50", "dy":"10"});
+    axes.append("text")
+      .text("voter turnout")
+      .style({"font-size":"8px", "text-anchor":"middle"})
+      .attr({"x":"0", "y":"-29"});
+    axes.append("text")
+      .text("general elections")
+      .style({"font-size":"8px","text-anchor":"middle"})
+      .attr({"x":"0", "y":"-29", "dy":"10"});
+    axes.append("text")
+      .text("24th February 13")
+      .style({"font-size":"8px","text-anchor":"middle"})
+      .attr("id","txtElect")
+      .attr({"x":"0", "y":"-29", "dy":"20"});
+
+    var lrLeg = legend.append("g")
+      //.attr("transform","translate(0,140)");
+      .attr("transform","translate(280,0)");
+    lrLeg.append("circle")
+      .attr({"cx":"35", "cy":"20", "r":"7"})
+      .style({"fill":"#626262"});
+    lrLeg.append("circle")
+      .attr({"cx":"15", "cy":"30", "r":"4"})
+      .style("fill","#626262");
+    lrLeg.append("line")
+      .attr({"x1":"0", "y1":"35", "x2":"55", "y2":"13"})
+      .style({"stroke-width":"5px", "stroke":"#626262", "stroke-opacity":"0.3"});
+    lrLeg.append("line")
+      .attr({"x1":"0", "y1":"35", "x2":"55", "y2":"13"})
+      .style({"stroke-width":"1px", "stroke":"#626262", "stroke-dasharray":"2,2"});
+    lrLeg.append("text")
+      .text("Linear Regression")
+      .style({"font-size":"8px"})
+      .attr({"x":"60", "y":"10", "dy":"0"});
+    lrLeg.append("text")
+      .text("95% confidence intervals")
+      .style({"font-size":"8px"})
+      .attr({"x":"60", "y":"10", "dy":"10"});
+    lrLeg.append("path")
+      .style({"fill-opacity":"0.5", "stroke-opacity":"1", "stroke-width":"1px", "fill":"url(#diagonalHatch)"})
+      .attr("d","M 60 22 L 70 22 L 70 32 L 60 32 Z");
+    lrLeg.append("path")
+      .style({"fill-opacity":"0", "stroke-opacity":"1", "stroke-width":"1px", "fill":"#00ff7f"})
+      .attr("d","M 60 22 L 70 22 L 70 32 L 60 32 Z")
+      .attr("id","inclConf")
+      .on("click", function() {
+        var item = d3.select(this);
+        item.style("fill-opacity") > 0.4 ? item.style("fill-opacity","0") : item.style("fill-opacity","0.5");
+        clickShowArc();
+      });
+    lrLeg.append("text")
+      .text("on slope")
+      .style({"font-size":"8px"})
+      .attr({"x":"72", "y":"20", "dy":"10"});
+    lrLeg.append("path")
+      .style({"fill-opacity":"0.5", "stroke-opacity":"1", "stroke-width":"1px", "fill":"url(#diagonalHatch)"})
+      .attr({"transform":"translate(0,12)"})
+      .attr("d","M 60 22 L 70 22 L 70 32 L 60 32 Z");
+    lrLeg.append("path")
+      .style({"fill-opacity":"0", "stroke-opacity":"1", "stroke-width":"1px", "fill":"#00ff7f"})
+      .attr({"transform":"translate(0,12)"})
+      .attr("d","M 60 22 L 70 22 L 70 32 L 60 32 Z")
+      .on("click", function() {
+        var item = d3.select(this);
+        item.style("fill-opacity") > 0.4 ? item.style("fill-opacity","0") : item.style("fill-opacity","0.5");
+       clickShowdb0();
+      });
+    lrLeg.append("text")
+      .text("on y-intercept")
+      .style({"font-size":"8px"})
+      .attr({"x":"72", "y":"20", "dy":"20"});
+
+
+
+
+    /*lrLeg.append("line")
+      .style({"stroke-width":"1px", "stroke":"#626262"})
+      .attr({"x1":"0", "x2":"0", "y1":"50", "y2":"0"});
+    lrLeg.append("line")
+      .style({"stroke-width":"1px", "stroke":"#626262"})
+      .attr({"x1":"0", "x2":"50", "y1":"50", "y2":"50"});
+    lrLeg.append("path")
+      .attr("d","M -3 0 L 3 0 L 0 -5.2 Z");
+    lrLeg.append("path")
+      .attr("d","M 50 47 L 50 53 L 55.2 50 Z");
+    lrLeg.append("circle")
+      .style("fill","#626262")
+      .attr({"cx":"0", "cy":"50", "r":"2"});
+    */
+
+    d3.select("h1").transition().duration(500)
+      .delay(function() { return 2000 * (maxpop/minpop - 2); })
+      .style("opacity","1");
+    
+    legend.transition().duration(500)
+      .delay(function() { return 2000 * (maxpop/minpop - 1.75); })
+      .style("opacity","1");
+    
+
+    /*
+    var xlabels = legend.append("g");
+    xlabels.append("path")
+        .attr("d","M 0 0 L 80 0 L 90 8 L 80 16 L 0 16 Z ")
+        .attr("class","label");
+    xlabels.append("circle")
+        .attr({"cx":"98", "cy":"8", "r":"8"})
+        //.attr("id","y13")
+        .attr("class","label-circle")
+        .on("click",function() {
+          console.log("go");
+          //d3.select(".on-year").classed("on-year",0);
+          //d3.select(this).classed("on-year",1);
+          changeYear("y13");
+        });
+      */
+
+  });
+
+  
+  
+  </script>
+
+  <!-- Make it responsive -->
+  <script>
+    var chart = $("#chart"),
+        aspect = chart.width() / chart.height(),
+        container = chart.parent();
+    var resize = function() {
+        var targetWidth = container.width();
+        chart.attr("width", targetWidth);
+        chart.attr("height", Math.round(targetWidth / aspect));
+        $("#text-container").css("margin-top", 0.95 * Math.round(targetWidth / aspect))
+    };
+    $(window).on("resize", resize).trigger("resize");
+    $(window).on("ready", resize).trigger("resize");
+
+    $("#seeDetails").click(function () {
+      $("#details-container").slideToggle(500);
+      $('html, body').animate({
+        //scrollTop: $("#details-container").offset().top + $('window').height()
+        scrollTop: 0.8 * $("#details-container").offset().top
+      }, 500);
+    });
+
+    $("#closeDetails").click(function () {
+      $("#details-container").slideToggle(500);
+    });
+
+  </script>
+
+</html>
